@@ -1,3 +1,32 @@
+/* Se importa una fuente de letras de Google Fonts, en este caso la Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Slab:wght@100..900&family=Work+Sans:ital@0;1&display=swap');
+
+/* Se importan las clases de Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* Se definen estilos base para lo que es el frontend*/
+@layer base {
+  html {
+    font-family: 'Poppins', sans-serif;
+  }
+
+  body {
+    background-color: #fdfeff;
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+
+  .input-box {
+    @apply w-full text-sm bg-transparent border-[1.5px] px-5 py-3 rounded mb-4 outline-none;
+  }
+
+  .btn-primary {
+    @apply w-full bg-primary text-white p-2 rounded my-1 hover:bg-blue-600;
+  }
+
+}
