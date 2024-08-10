@@ -1,20 +1,37 @@
 import ProfileInfo from "../Cards/ProfileInfo"
 import { useNavigate } from "react-router-dom"
+import SearchBar from "../SearchBar/SearchBar"
+import { useState } from "react";
 
 // El componente 'Navbar' corresponde a un menu de navegacion
 function NavBar() {
 
-  const navigate = useNavigate
+  // Se usa un useState para controlar lo que se escriba en la barra de busqueda
+  const [searchQuery, setSearchQuery] = useState('');
 
+  const navigate = useNavigate
   // Al hacer click en el botón de logout, se llama a la función 'onLogout' haciendo que se cierre la sesion del usuario
   const onLogout = () => {
     navigate('/login')
+  }
+
+  const handleSearch = () => {
+
+  }
+
+  const onClearSearch = () => {
+    setSearchQuery('')
   }
 
   return (
     <>
       <div className="bg-white flex items-center justify-between px-6 py-2 drop-shadow">
         <h2 className="text-xl font-medium text-black py-2">Notas</h2>
+
+        {/** se importa el componente 'SearchBar */}
+        <SearchBar value={searchQuery} onChange={({ target }) => {setSearchQuery(target.value)}} 
+          handleSearch={handleSearch} onClearSearch={onClearSearch}
+        />
       
         {/** Se importa el componente 'ProfileInfo' */}
         <ProfileInfo onLogout={onLogout} />
