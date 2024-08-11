@@ -7,6 +7,9 @@ import Modal from 'react-modal'
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import Toast from '../../components/ToasMessage/Toast';
+import EmptyCard from '../../components/EmptyCards/EmptyCard';
+import addNotesImg from '../../assets/images/addNotesImg.svg'
+import noMatchNotes from '../../assets/images/noMatchNotes.svg'
 
 // La pagina 'Home' corresponde al link de 'dashboard' es lo que se muestra cuando ya se accede a la aplicacion
 function Home() {
@@ -30,6 +33,9 @@ function Home() {
   // Ya se importo react-router-dom; por ende con ayuda de un useState vamos a manejar el usuario logueado
   const [userInfo, setUserInfo] = useState(null)
 
+  // Con un hook 'useState' vamos a realizar la busqueda de las notas con la barra de busqueda 
+  const [isSearch, setIsSearch] = useState(false);
+
   const navigate = useNavigate()
 
   const handleEdit = (noteDetails) => {
@@ -38,7 +44,7 @@ function Home() {
 
   const showToastMessage = (message, type) => {
     setShowToastMsg({
-      isShown: true,
+      isShown: false,
       message,
       type
     })
@@ -46,7 +52,7 @@ function Home() {
 
   const handleCloseToast = () => {
     setShowToastMsg({
-      isShown: false,
+      isShown: true,
       message: ''
     })
   }
@@ -81,14 +87,14 @@ function Home() {
     }
   }
 
-  // Con la funcion 'DeletedNote' se hace el llamado para eliminar una nota
+  // Con la funcion 'deleteNote' se hace el llamado para eliminar una nota
   const deleteNote = async (data) => {
     const noteId = data._id
 
     try {
       const response  = await axiosInstance.delete('/delete-note/' + noteId)
 
-      if (response) {
+      if (response.data && !response.data.error) {
         showToastMessage('Nota eliminada correctamente', 'delete')
         getAllNotes()
       }
@@ -101,6 +107,49 @@ function Home() {
     }
   }
 
+  // Con la funcion 'onSearchNote' se hace busqueda de alguna nota a traves de la barra de busqueda
+  const onSearchNote = async (query) => {
+    try{
+      const response = await axiosInstance.get('/search-notes', {
+        params: {query}
+      })
+
+      if(response.data && response.data.notes){
+        setIsSearch(true)
+        setAllNotes(response.data.notes)
+      }
+
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+
+  // La funcion 'updateIsPinned' es para pinear una nota
+  const updateIsPinned = async (noteData) => {
+    const noteId = noteData._id
+
+    try{
+      const response = await axiosInstance.put('/update-note-pinned/' + noteId, {
+        'isPinned': !noteData.isPinned
+      })
+
+      if(response.data && response.data.note){
+        showToastMessage('Nota pineda correctamente', 'pin')
+        getAllNotes()
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // La funcion 'handleClearSearch' limpia la busqueda de las notas y muestra todas las notas existentes
+  const handleClearSearch = () => {
+    setIsSearch(false)
+    getAllNotes()
+  }
+
   useEffect(() => {
     getAllNotes()
     getUserInfo()
@@ -110,21 +159,31 @@ function Home() {
   return (
     <>
       {/** Importamos el componente 'Navbar' */}
-      <Navbar userInfo={userInfo} />
+      <Navbar userInfo={userInfo} onSearchNote={onSearchNote} handleClearSearch={handleClearSearch} />
 
       {/** Aqui se muestra el contenido de la pagina (componente 'NoteCard') */}
       <div className='container mx-auto'>
-        <div className='grid grid-cols-3 gap-4 mt-8'>
-
-          {/** Se mapean las notas respectivas de cada usuario */}
-          {allNotes.map((item, index) => (
-            <NoteCard key={item._id} title={item.title} date={item.createdOn} 
-              content={item.content} tags={item.tags} isPinned={item.isPinned} 
-              onEdit={() => handleEdit(item)} onDelete={() => deleteNote(item)} 
-              onPinNote={() => {}} 
+        {allNotes.length > 0
+          ? (
+            <div className='grid grid-cols-3 gap-4 mt-8'>
+              {/** Se mapean las notas respectivas de cada usuario */}
+              {allNotes.map((item, index) => (
+                <NoteCard key={item._id} title={item.title} date={item.createdOn} 
+                  content={item.content} tags={item.tags} isPinned={item.isPinned} 
+                  onEdit={() => handleEdit(item)} onDelete={() => deleteNote(item)} 
+                  onPinNote={() => updateIsPinned(item)} 
+                />
+              ))}
+            </div>
+          ) : (
+            <EmptyCard imgSrc={isSearch ? noMatchNotes : addNotesImg} 
+              message={isSearch 
+                ? 'Ninguna nota coincide con tu busqueda, tal vez la nota esta escrita de otra manera' 
+                : 'Agrega una nueva nota, puedes escribir sobre eventos, pensamientos, ideas o pequeños recordatorios'
+              } 
             />
-          ))}
-        </div>
+          )
+        }
       </div>
 
       {/** El boton con el icono 'MdAdd' corresponde al boton en le dashboard para crear una nueva nota */}

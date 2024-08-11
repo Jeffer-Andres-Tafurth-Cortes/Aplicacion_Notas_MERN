@@ -4,7 +4,7 @@ import SearchBar from "../SearchBar/SearchBar"
 import { useState } from "react";
 
 // El componente 'Navbar' corresponde a un menu de navegacion
-function NavBar({ userInfo }) {
+function NavBar({ userInfo, onSearchNote, handleClearSearch }) {
 
   // Se usa un useState para controlar lo que se escriba en la barra de busqueda
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,12 +17,17 @@ function NavBar({ userInfo }) {
     navigate('/login')
   }
 
+  // Funcion 'handleSearch' maneja la busqueda de las notas en la barra de busqueda
   const handleSearch = () => {
-
+    if(searchQuery){
+      onSearchNote(searchQuery)
+    }
   }
 
+  // Funcion 'onClearSearch' maneja el borrado de la busqueda en la barra de busqueda
   const onClearSearch = () => {
     setSearchQuery('')
+    handleClearSearch()
   }
 
   return (

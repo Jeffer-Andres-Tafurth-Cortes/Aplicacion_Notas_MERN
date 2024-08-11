@@ -233,6 +233,37 @@ app.put('/update-note-pinned/:noteId', authenticateToken, async(request, respons
   }
 })
 
+// Se define la ruta para buscar una nota en especifico a travez de la barra de busqueda (ruta -> '/search-notes/ ')
+app.get('/search-notes', authenticateToken, async (request, response) => {
+  const { user } = request.user
+  const { query } = request.query
+
+  if(!query){
+    return response.status(400).json({ error: true, message: 'Se requiere un parametro para la busqueda' })
+  }
+
+  try {
+
+    // Se hace uso de 'regex' para poder hacer el match de lo que se escribe en la barra de busqueda
+    const matchingNotes = await Note.find({
+      userId: user._id,
+      $or: [
+        { title: {$regex: new RegExp(query, 'i') } },
+        { content: {$regex: new RegExp(query, 'i') } }
+      ]
+    })
+
+    return response.json({
+      error: false,
+      notes: matchingNotes,
+      message: 'Notas obtenidas correctamente'
+    })
+
+  } catch (error) {
+    return response.status(500).json({ error: true, message: 'Error en el servidor' })
+  }
+})
+
 
 
 app.listen(8000)
