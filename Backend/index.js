@@ -265,7 +265,6 @@ app.get('/search-notes', authenticateToken, async (request, response) => {
 })
 
 
-
 app.listen(8000)
 
 module.exports = app
