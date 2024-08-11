@@ -1,9 +1,11 @@
 import { MdAdd } from 'react-icons/md'
 import NoteCard from '../../components/Cards/NoteCard'
-import Navbar from '../../components/Navbar/Navbar'
+import Navbar from '../../components/Navbar/NavBar'
 import AddEditNotes from './AddEditNotes'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from 'react-modal'
+import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../../utils/axiosInstance';
 
 // La pagina 'Home' corresponde al link de 'dashboard' es lo que se muestra cuando ya se accede a la aplicacion
 function Home() {
@@ -15,10 +17,36 @@ function Home() {
     data: null
   });
 
+  // Ya se importo react-router-dom; por ende con ayuda de un useState vamos a manejar el usuario logueado
+  const [userInfo, setUserInfo] = useState(null)
+
+  const navigate = useNavigate()
+
+  // Obtenemos la respectiva informacion del usuario
+  const getUserInfo = async () => {
+    try {
+      const response = await axiosInstance.get('/get-user')
+      if(response.data && response.data.user){
+        setUserInfo(response.data.user)
+      }
+
+    } catch (error) {
+      if(error.response.status === 401){
+        localStorage.clear()
+        navigate('/login')
+      }
+    }
+  }
+
+  useEffect(() => {
+    getUserInfo()
+    return () => {}
+  }, []);
+
   return (
     <>
       {/** Importamos el componente 'Navbar' */}
-      <Navbar />
+      <Navbar userInfo={userInfo} />
 
       {/** Aqui se muestra el contenido de la pagina (componente 'NoteCard') */}
       <div className='container mx-auto'>

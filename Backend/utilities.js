@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 
 // Esta funcion valida el token de autenticacion del usuario
 function authenticateToken(request, response, next){
-  const authHeader = request.headers["authentication"]
+  const authHeader = request.headers["authorization"]
   const token = authHeader && authHeader.split(' ')[1]
 
   // Si el token no existe se envia un stado 401
@@ -17,4 +17,4 @@ function authenticateToken(request, response, next){
   })
 }
 
-module.exports = {authenticateToken}
+module.exports = { authenticateToken }

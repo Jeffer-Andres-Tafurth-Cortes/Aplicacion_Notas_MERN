@@ -4,14 +4,16 @@ import SearchBar from "../SearchBar/SearchBar"
 import { useState } from "react";
 
 // El componente 'Navbar' corresponde a un menu de navegacion
-function NavBar() {
+function NavBar({ userInfo }) {
 
   // Se usa un useState para controlar lo que se escriba en la barra de busqueda
   const [searchQuery, setSearchQuery] = useState('');
 
-  const navigate = useNavigate
+  const navigate = useNavigate()
+  
   // Al hacer click en el botón de logout, se llama a la función 'onLogout' haciendo que se cierre la sesion del usuario
   const onLogout = () => {
+    localStorage.clear()
     navigate('/login')
   }
 
@@ -34,7 +36,7 @@ function NavBar() {
         />
       
         {/** Se importa el componente 'ProfileInfo' */}
-        <ProfileInfo onLogout={onLogout} />
+        <ProfileInfo userInfo={userInfo} onLogout={onLogout} />
       
       </div>
     </>

@@ -1,7 +1,9 @@
 import { useState } from "react";
 import NavBar from "../../components/Navbar/NavBar"
 import PasswordInput from "../../components/Input/PasswordInput";
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import axiosInstance from "../../utils/axiosInstance";
+import { validateEmail } from "../../utils/helpers";
 
 // El componente 'SignUp' corresponde al registro y/o creacion de cuenta del usuario a la aplicacion
 function SignUp() {
@@ -12,9 +14,11 @@ function SignUp() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
 
+  const navigate = useNavigate()
+
 
   // La funcion 'handleSignUp' se ejecuta cuando el evento onSubmit del formulario de activa
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault()
 
     // Validamos si el campo de nombre esta escrito
@@ -39,6 +43,30 @@ function SignUp() {
 
 
     // A partir de aqui se realiza la llamada a la API de SignUp (Registro)
+    try {
+      const response = await axiosInstance.post('/create-account', {
+        fullName: name,
+        email: email,
+        password: password,
+      })
+
+      if(response.data && response.data.error){
+        setError(response.data.message)
+        return
+      }
+
+      if(response.data && response.data.accessToken){
+        localStorage.setItem('token', response.data.accessToken)
+        navigate('/dashboard')
+      }
+
+    } catch (error) {
+      if(error.response && error.response.data && error.response.data.message){
+        setError(error.response.data.message)
+      } else {
+        setError('Ocurrio un error, vuelva a intentar')
+      }
+    }
   }
 
   return (
@@ -53,7 +81,7 @@ function SignUp() {
           <form onSubmit={handleSignUp}>
             <h4 className="text-2xl mb-7">Registrarme</h4>
 
-            <input type="text" placeholder="Nombre" className="input-box" value={name} onChange={(e) => setEmail(e.target.value)} />
+            <input type="text" placeholder="Nombre" className="input-box" value={name} onChange={(e) => setName(e.target.value)} />
             <input type="text" placeholder="Correo electronico" className="input-box" value={email} onChange={(e) => setEmail(e.target.value)} />
 
             <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} />

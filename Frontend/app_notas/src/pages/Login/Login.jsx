@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import NavBar from "../../components/Navbar/NavBar"
 import PasswordInput from "../../components/Input/PasswordInput"
 import { validateEmail } from "../../utils/helpers"
 import { useState } from "react"
+import axiosInstance from "../../utils/axiosInstance"
 
 // El componente 'Login' corresponde al inicio de sesion del usuario a la aplicacion
 function Login() {
@@ -11,6 +12,8 @@ function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
+
+  const navigate = useNavigate()
 
   // La funcion 'handleLogin' se ejecuta cuando el evento onSubmit del formulario de activa
   const handleLogin = async (e) => {
@@ -27,11 +30,28 @@ function Login() {
       setError('Por favor escriba una contraseña')
       return
     }
-
     setError('')
 
 
     // A partir de aqui se realiza la llamada a la API de Login (iniciar sesion)
+    try {
+      const response = await axiosInstance.post('/login', {
+        email: email,
+        password: password
+      })
+
+      if(response.data && response.data.accessToken){
+        localStorage.setItem('token', response.data.accessToken)
+        navigate('/dashboard')
+      }
+
+    } catch (error) {
+      if(error.response && error.response.data && error.response.data.message){
+        setError(error.response.data.message)
+      } else {
+       setError('Ocurrio un error al intentar iniciar sesion')
+      }
+    }
   }
 
   return (
