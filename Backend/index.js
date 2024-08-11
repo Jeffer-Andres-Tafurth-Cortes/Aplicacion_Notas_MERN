@@ -131,14 +131,14 @@ app.post('/add-note', authenticateToken, async(request, response) => {
   
   // Creamos la nota y la guardamos en la base de datos
   try {
-    const note = newNote({
+    const note = new Note({
       title,
       content,
       tags: tags || [],
       userId: user._id
     })
     await note.save()
-    return response.json({error: false, note, message: 'La nota se creo correctamente'})
+    return response.json({ error: false, note, message: 'La nota se creo correctamente'})
 
   } catch(error){
     return response.status(500).json({ error: true, message: 'Error al crear la nota'})

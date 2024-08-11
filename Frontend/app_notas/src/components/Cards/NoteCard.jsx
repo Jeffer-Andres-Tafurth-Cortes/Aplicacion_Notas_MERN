@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { MdOutlinePushPin } from 'react-icons/md'
 import { MdCreate, MdDelete } from 'react-icons/md'
 
@@ -14,7 +15,7 @@ function NoteCard({ title, date, content, tags, isPinned, onEdit, onDelete, onPi
         {/** Este div contendra el titlo y la fecha de la nota */}
         <div>
           <h6 className='text-sm font-medium'>{title}</h6>
-          <span className='text-sx text-slate-500'>{date}</span>
+          <span className='text-sx text-slate-500'>{moment(date).format('Do MMM YYYY')}</span>
         </div>
 
         {/** Este icono corresponde a si queremos pinear o no la nota */}
@@ -26,7 +27,7 @@ function NoteCard({ title, date, content, tags, isPinned, onEdit, onDelete, onPi
 
       {/** Este div contendra las etiquetas de la nota y las opciones para editar y/o eliminar una nota */}
       <div className='flex items-center justify-between mt-2'>
-        <div className='text-xs text-slate-500'>{tags}</div>
+        <div className='text-xs text-slate-500'>{tags.map((item) => `#${item}`)}</div>
 
         <div className='flex items-center gap-2'>
           <MdCreate className='icon-btn hover:text-green-600' onClick={onEdit} />
