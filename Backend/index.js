@@ -3,7 +3,7 @@ require('dotenv').config()
 const mongoose = require('mongoose')
 
 // Conectamos a la base de datos MongoDB
-mongoose.connect(process.env.MONGODB_URL)
+mongoose.connect(`../${process.env.MONGODB_URL}`)
 
 // Importamos el modelo de usuario y el modelo de las notas
 const User = require('./models/user.model.js')
@@ -61,7 +61,7 @@ app.post('/create-account', async (request, response) => {
   })
   await user.save()
 
-  const accessToken = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '36000m'})
+  const accessToken = jwt.sign({ user }, `../${process.env.ACCESS_TOKEN_SECRET}`, { expiresIn: '36000m'})
   response.json({ error: false, user, accessToken, message: 'Usuario creado correctamente' })
 })
 
@@ -89,7 +89,7 @@ app.post('/login', async (request, response) => {
   // Verificamos que el correo y la contraseña coincidan con la base de datos
   if(userInfo.email == email && userInfo.password == password){
     const user = { user: userInfo }
-    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '36000m'})
+    const accessToken = jwt.sign(user, `../${process.env.ACCESS_TOKEN_SECRET}`, { expiresIn: '36000m'})
     return response.json({ error: false, email, accessToken, message: 'Usuario logueado correctamente' })
 
   } else {

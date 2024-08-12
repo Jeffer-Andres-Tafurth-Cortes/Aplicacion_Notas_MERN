@@ -10,7 +10,7 @@ function authenticateToken(request, response, next){
   if(!token) return response.sendStatus(401)
 
   // Se verifica el token de acceso con la clave secreta
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+  jwt.verify(token, `../${process.env.ACCESS_TOKEN_SECRET}`, (err, user) => {
     if(err) return response.sendStatus(401)
     request.user = user
     next()
