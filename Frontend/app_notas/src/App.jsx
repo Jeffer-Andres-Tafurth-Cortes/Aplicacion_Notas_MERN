@@ -7,7 +7,7 @@ import { BrowserRouter as  Router, Routes, Route, Navigate  } from 'react-router
 const routes = (
   <Router>
     <Routes>
-      <Route path='/' element={<Navigate to={'/login'} />} />
+      {/*<Route path='/' element={<Navigate to={'/login'} />} />*/}
       <Route path='/dashboard' element={<Home />} />
       <Route path='/login' element={<Login />}  />
       <Route path='/signup' element={<SignUp />} />
