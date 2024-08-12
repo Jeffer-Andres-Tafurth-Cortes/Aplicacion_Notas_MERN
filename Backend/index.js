@@ -1,10 +1,9 @@
 // Importamos 'dotenv' para la configuracion de las variables de entorno
 require('dotenv').config()
-const config = require('./config.json')
 const mongoose = require('mongoose')
 
 // Conectamos a la base de datos MongoDB
-mongoose.connect(config.connectionString)
+mongoose.connect(process.env.MONGODB_URL)
 
 // Importamos el modelo de usuario y el modelo de las notas
 const User = require('./models/user.model.js')
